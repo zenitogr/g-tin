@@ -38,19 +38,36 @@ const AIChatbot = () => {
     // Set new timeout
     scrollTimeoutRef.current = setTimeout(() => {
       if (!newIsScrolledToBottom) {
-        const lastVisibleMessageIndex = Math.floor((scrollTop + clientHeight) / 50) - 1;
-        console.log('Last visible message index:', lastVisibleMessageIndex);
+        const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
+        let firstVisibleIndex = -1;
+        let lastVisibleIndex = -1;
+
+        messageElements.forEach((el, index) => {
+          const rect = el.getBoundingClientRect();
+          const topVisible = rect.top >= 0 && rect.top < clientHeight;
+          const bottomVisible = rect.bottom > 0 && rect.bottom <= clientHeight;
+
+          if ((topVisible || bottomVisible) && firstVisibleIndex === -1) {
+            firstVisibleIndex = index;
+          }
+          if (topVisible || bottomVisible) {
+            lastVisibleIndex = index;
+          }
+        });
+
+        console.log('First visible message index:', firstVisibleIndex);
+        console.log('Last visible message index:', lastVisibleIndex);
         console.log('Current marker start index:', markerStartIndex);
         
-        if (lastVisibleMessageIndex >= 0) {
+        if (firstVisibleIndex >= 0 && lastVisibleIndex >= 0) {
           if (markerStartIndex === null) {
             console.log('Setting marker start index');
-            setMarkerStartIndex(lastVisibleMessageIndex);
+            setMarkerStartIndex(firstVisibleIndex);
           } else {
             console.log('Creating new marker');
             const newMarker: Marker = {
               start: markerStartIndex,
-              end: lastVisibleMessageIndex,
+              end: lastVisibleIndex,
               id: Date.now()
             };
             setMarkers(prev => {
