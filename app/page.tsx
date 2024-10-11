@@ -156,7 +156,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-grow overflow-hidden">
+      <div className="flex flex-grow overflow-hidden pb-28"> {/* Increased padding-bottom */}
         <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
           <AnimatePresence>
             {messages.map((message, index) => (
@@ -185,7 +185,7 @@ export default function Home() {
         />
       </div>
       <motion.div 
-        className="flex space-x-2 p-2 bg-gray-800"
+        className="flex space-x-2 p-2 bg-gray-800 fixed bottom-14 left-0 right-0" // Fixed position
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -206,8 +206,6 @@ export default function Home() {
           </Button>
         </motion.div>
       </motion.div>
-      {/* Add padding to account for the fixed navbar */}
-      <div className="h-14"></div>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
