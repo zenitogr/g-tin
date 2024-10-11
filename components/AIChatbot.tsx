@@ -24,10 +24,11 @@ const AIChatbot = () => {
   const [isButtonScroll, setIsButtonScroll] = useState(false);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
+  const [isMarkerScrolling, setIsMarkerScrolling] = useState(false);
 
   const handleScroll = useCallback(() => {
     const chatContainer = chatContainerRef.current;
-    if (!chatContainer || isButtonScroll) return;
+    if (!chatContainer || isButtonScroll || isMarkerScrolling) return;
 
     const { scrollTop, scrollHeight, clientHeight } = chatContainer;
     const newIsScrolledToBottom = scrollHeight - scrollTop - clientHeight < 1;
@@ -55,7 +56,7 @@ const AIChatbot = () => {
         }
       });
 
-      if (visibleMessageIds.length > 0) {
+      if (visibleMessageIds.length > 0 && !isMarkerScrolling) {
         const newMarker: Marker = {
           id: Date.now(),
           messageIds: visibleMessageIds,
@@ -69,7 +70,7 @@ const AIChatbot = () => {
         });
       }
     }, 1000);
-  }, [isButtonScroll]);
+  }, [isButtonScroll, isMarkerScrolling]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -116,6 +117,7 @@ const AIChatbot = () => {
   };
 
   const scrollToMarker = (index: number) => {
+    setIsMarkerScrolling(true);
     setIsButtonScroll(true);
     if (chatContainerRef.current && markers[index]) {
       chatContainerRef.current.scrollTo({
@@ -123,7 +125,10 @@ const AIChatbot = () => {
         behavior: 'smooth'
       });
       setCurrentMarkerIndex(index);
-      setTimeout(() => setIsButtonScroll(false), 1000); // Reset after scroll animation
+      setTimeout(() => {
+        setIsButtonScroll(false);
+        setIsMarkerScrolling(false);
+      }, 1000); // Reset after scroll animation
     }
   };
 
