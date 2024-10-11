@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# AIChatbot Component
+
+The AIChatbot component is a comprehensive chat interface for interacting with an AI assistant. It provides a user-friendly interface with features like message history, scrolling, and navigation markers.
+
+## Features
+
+- Real-time chat interface
+- Message history with user and AI messages
+- Scrollable chat container with navigation controls
+- Marker system for easy navigation through the chat history
+- Expandable/collapsible navigation panel
+- Error handling and display
+- Responsive design
+
+## Usage
+
+To use the AIChatbot component in your project, import it and include it in your JSX:

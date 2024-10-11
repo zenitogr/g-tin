@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from '../components/Navbar';
+import Link from 'next/link';
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "g-tin",
@@ -26,14 +17,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-full`}
-      >
-        <Navbar />
-        <main className="flex-grow overflow-hidden flex flex-col">
-          <div className="container mx-auto px-4 py-2 flex-grow overflow-auto">
-            {children}
-          </div>
+      <body className={`${inter.className} flex flex-col h-full bg-gray-900 text-white`}>
+        <header className="bg-gray-800 p-4">
+          <nav className="flex justify-between items-center max-w-6xl mx-auto">
+            <h1 className="text-2xl font-bold">g-tin</h1>
+            <ul className="flex space-x-6">
+              <li><Link href="/" className="hover:text-gray-300 text-lg">Home</Link></li>
+              <li><Link href="/about" className="hover:text-gray-300 text-lg">About</Link></li>
+              <li><Link href="/contact" className="hover:text-gray-300 text-lg">Contact</Link></li>
+            </ul>
+          </nav>
+        </header>
+        <main className="flex-grow overflow-hidden">
+          {children}
         </main>
       </body>
     </html>
