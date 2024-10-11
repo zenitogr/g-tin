@@ -27,8 +27,8 @@ export default function MarkerNavigation({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
         </svg>
       </Button>
-      <div className="bg-gray-700 rounded-full w-6 h-6 flex items-center justify-center mb-1 text-sm">
-        {currentMarkerNumber}
+      <div className="bg-gray-700 rounded-lg px-2 py-1 mb-1 text-sm">
+        {currentMarkerNumber}/{totalMarkers}
       </div>
       <Button variant="ghost" className="p-1 mb-1" onClick={onNavigateDown}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
@@ -39,9 +39,7 @@ export default function MarkerNavigation({
         -
       </Button>
       <Button variant="ghost" className="p-1" onClick={onAddMarker}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
+        +
       </Button>
     </div>
   );

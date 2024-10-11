@@ -17,6 +17,8 @@ export default function Home() {
   const { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker } = useMarkers();
   const [, setForceUpdate] = useState({});
   const shouldScrollRef = useRef(true);
+  const lastScrollPositionRef = useRef(0);
+  const isNavigatingRef = useRef(false);
 
   useEffect(() => {
     setForceUpdate({});
@@ -85,6 +87,7 @@ export default function Home() {
   }, []);
 
   const handleNavigateMarker = useCallback((direction: 'up' | 'down') => {
+    isNavigatingRef.current = true;
     const newMarkerIndex = navigateMarker(direction);
     if (newMarkerIndex !== null) {
       const marker = markers.find(m => m.id === newMarkerIndex);
@@ -92,15 +95,30 @@ export default function Home() {
         scrollToMarker(marker.messageIndex);
       }
     }
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 100);
   }, [navigateMarker, markers, scrollToMarker]);
 
   const handleScroll = useCallback(() => {
-    if (scrollTimerRef.current) {
-      clearTimeout(scrollTimerRef.current);
+    if (chatRef.current && !isNavigatingRef.current) {
+      const currentScrollPosition = chatRef.current.scrollTop;
+      
+      // Clear existing timer
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+
+      // Set new timer only if the scroll position has changed
+      if (currentScrollPosition !== lastScrollPositionRef.current) {
+        scrollTimerRef.current = setTimeout(() => {
+          handleAddMarker();
+        }, 2000);
+      }
+
+      lastScrollPositionRef.current = currentScrollPosition;
     }
-    scrollTimerRef.current = setTimeout(() => {
-      handleAddMarker();
-    }, 2000);
   }, [handleAddMarker]);
 
   const getCurrentMarkerNumber = useCallback(() => {
