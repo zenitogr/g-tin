@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronDown, ChevronUp, ChevronsDown } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsDown, Send } from 'lucide-react';
 
 const AIChatbot = () => {
-  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; id: number }>>([]);
+  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; id: number }>>([
+    { text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false, id: Date.now() }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
   const [markers, setMarkers] = useState<number[]>([]);
   const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
@@ -59,6 +61,11 @@ const AIChatbot = () => {
     }
   }, [messages]);
 
+  useEffect(() => {
+    // Scroll to bottom when component mounts to show initial message
+    scrollToBottom();
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -102,11 +109,11 @@ const AIChatbot = () => {
   };
 
   return (
-    <div className="flex h-full relative">
+    <div className="flex h-full relative chat-container">
       <div className="flex-grow flex flex-col">
         <div 
           ref={chatContainerRef} 
-          className="flex-grow overflow-y-auto p-4 space-y-4"
+          className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-custom"
         >
           {messages.map((message, index) => (
             <div 
@@ -114,7 +121,7 @@ const AIChatbot = () => {
               id={`message-${index}`}
               className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} relative`}
             >
-              <div className={`max-w-[70%] p-2 rounded-lg ${message.isUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+              <div className={`message ${message.isUser ? 'message-user' : 'message-ai'}`}>
                 {message.text}
               </div>
               {markers.includes(index) && (
@@ -123,29 +130,30 @@ const AIChatbot = () => {
             </div>
           ))}
         </div>
-        <div className="p-4 border-t">
-          <div className="flex space-x-2">
+        <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex space-x-2 items-center">
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="flex-grow p-2 border rounded-lg"
+              className="chat-input flex-grow"
               placeholder="Type your message..."
             />
             <button
               onClick={handleSendMessage}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              className="chat-button bg-blue-500 text-white"
+              aria-label="Send message"
             >
-              Send
+              <Send size={20} />
             </button>
           </div>
         </div>
       </div>
-      <div className="w-12 flex flex-col justify-end space-y-2 p-2 bg-gray-100">
+      <div className="w-12 flex flex-col justify-end space-y-2 p-2 bg-gray-100 dark:bg-gray-800">
         <button
           onClick={() => navigateMarkers('prev')}
-          className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50"
+          className="chat-button bg-green-500 text-white"
           aria-label="Previous marker"
           disabled={markers.length === 0}
         >
@@ -153,7 +161,7 @@ const AIChatbot = () => {
         </button>
         <button
           onClick={() => navigateMarkers('next')}
-          className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50"
+          className="chat-button bg-green-500 text-white"
           aria-label="Next marker"
           disabled={markers.length === 0}
         >
@@ -161,7 +169,7 @@ const AIChatbot = () => {
         </button>
         <button
           onClick={scrollToBottom}
-          className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
+          className="chat-button bg-blue-500 text-white"
           aria-label="Scroll to bottom"
         >
           <ChevronsDown size={24} />
