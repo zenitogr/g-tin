@@ -156,7 +156,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-grow overflow-hidden pb-28"> {/* Increased padding-bottom */}
+      <div className="flex flex-grow overflow-hidden pb-[104px]"> {/* Adjusted padding-bottom */}
         <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
           <AnimatePresence>
             {messages.map((message, index) => (
@@ -185,7 +185,7 @@ export default function Home() {
         />
       </div>
       <motion.div 
-        className="flex space-x-2 p-2 bg-gray-800 fixed bottom-14 left-0 right-0" // Fixed position
+        className="flex space-x-2 p-2 bg-gray-800 fixed bottom-14 left-0 right-0 h-[52px]" // Added fixed height
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -199,7 +199,7 @@ export default function Home() {
           className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-l-lg"
         />
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-r-lg">
+          <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-r-lg h-full">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
               <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
             </svg>
