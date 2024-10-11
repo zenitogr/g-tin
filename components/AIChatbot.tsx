@@ -1,13 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useChat } from '../hooks/useChat';
 import { ChatMessages } from './ChatMessages';
 import { ChatInput } from './ChatInput';
 import { ChatLayout } from './ChatLayout';
 
 const AIChatbot = () => {
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const {
     messages,
@@ -18,6 +17,7 @@ const AIChatbot = () => {
     handleScroll,
     navigateMarkers,
     scrollToBottom,
+    chatContainerRef,
   } = useChat();
 
   const toggleNav = () => {
