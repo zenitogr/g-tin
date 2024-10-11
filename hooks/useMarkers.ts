@@ -2,17 +2,17 @@ import { useState, useCallback } from 'react';
 
 export interface Marker {
   id: number;
-  messageIndex: number;
+  scrollPosition: number;
 }
 
 export function useMarkers() {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
 
-  const addMarker = useCallback((messageIndex: number) => {
+  const addMarker = useCallback((scrollPosition: number) => {
     const newMarker: Marker = {
       id: Date.now(),
-      messageIndex,
+      scrollPosition,
     };
     setMarkers(prevMarkers => {
       const updatedMarkers = [...prevMarkers, newMarker];
@@ -38,7 +38,7 @@ export function useMarkers() {
   const navigateMarker = (direction: 'up' | 'down'): number | null => {
     if (markers.length === 0) return null;
 
-    const sortedMarkers = [...markers].sort((a, b) => a.messageIndex - b.messageIndex);
+    const sortedMarkers = [...markers].sort((a, b) => a.scrollPosition - b.scrollPosition);
     const currentIndex = currentMarkerIndex !== null
       ? sortedMarkers.findIndex(marker => marker.id === currentMarkerIndex)
       : -1;

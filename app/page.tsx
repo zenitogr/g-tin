@@ -72,8 +72,7 @@ export default function Home() {
   const handleAddMarker = useCallback(() => {
     if (chatRef.current) {
       const scrollPosition = chatRef.current.scrollTop;
-      const messageIndex = Math.floor(scrollPosition / 50); // Assuming each message is roughly 50px tall
-      addMarker(messageIndex);
+      addMarker(scrollPosition);
       console.log('Marker added, total markers:', markers.length + 1);
     }
   }, [addMarker, markers.length]);
@@ -85,9 +84,9 @@ export default function Home() {
     }
   }, [currentMarkerIndex, removeMarker, markers.length]);
 
-  const scrollToMarker = useCallback((messageIndex: number) => {
+  const scrollToMarker = useCallback((scrollPosition: number) => {
     if (chatRef.current) {
-      chatRef.current.scrollTop = messageIndex * 50; // Assuming each message is roughly 50px tall
+      chatRef.current.scrollTop = scrollPosition;
     }
   }, []);
 
@@ -97,7 +96,7 @@ export default function Home() {
     if (newMarkerIndex !== null) {
       const marker = markers.find(m => m.id === newMarkerIndex);
       if (marker) {
-        scrollToMarker(marker.messageIndex);
+        scrollToMarker(marker.scrollPosition);
       }
     }
     // Reset the flag after a short delay
