@@ -179,13 +179,23 @@ const AIChatbot = () => {
     const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
     const { scrollTop, clientHeight } = chatContainer;
 
+    let nextMessageToScroll: HTMLElement | null = null;
+
     for (let i = 0; i < messageElements.length; i++) {
       const element = messageElements[i] as HTMLElement;
-      const elementBottom = element.offsetTop + element.offsetHeight;
-      if (elementBottom > scrollTop + clientHeight) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const elementTop = element.offsetTop;
+      
+      if (elementTop > scrollTop) {
+        nextMessageToScroll = element;
         break;
       }
+    }
+
+    if (nextMessageToScroll) {
+      chatContainer.scrollTo({
+        top: nextMessageToScroll.offsetTop,
+        behavior: 'smooth'
+      });
     }
   };
 
