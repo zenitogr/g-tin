@@ -16,17 +16,42 @@ export default function Home() {
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker } = useMarkers();
   const [, setForceUpdate] = useState({});
+  const shouldScrollRef = useRef(true);
 
   useEffect(() => {
     setForceUpdate({});
   }, [markers]);
 
+  const isScrolledToBottom = useCallback(() => {
+    if (chatRef.current) {
+      const { scrollHeight, clientHeight, scrollTop } = chatRef.current;
+      return scrollHeight - clientHeight <= scrollTop + 20; // Allow 20px margin
+    }
+    return false;
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    if (chatRef.current && shouldScrollRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, []);
+
   const handleSendMessage = () => {
     if (inputMessage.trim()) {
-      setMessages(prevMessages => [...prevMessages, { text: inputMessage, isUser: true }]);
+      shouldScrollRef.current = isScrolledToBottom();
+      setMessages(prevMessages => {
+        const newMessages = [...prevMessages, { text: inputMessage, isUser: true }];
+        setTimeout(scrollToBottom, 0);
+        return newMessages;
+      });
       setInputMessage('');
       setTimeout(() => {
-        setMessages(prevMessages => [...prevMessages, { text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }]);
+        shouldScrollRef.current = isScrolledToBottom();
+        setMessages(prevMessages => {
+          const newMessages = [...prevMessages, { text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }];
+          setTimeout(scrollToBottom, 0);
+          return newMessages;
+        });
       }, 1000);
     }
   };
@@ -98,6 +123,10 @@ export default function Home() {
       }
     };
   }, [handleScroll]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   return (
     <div className="flex flex-col h-full max-w-6xl mx-auto">
