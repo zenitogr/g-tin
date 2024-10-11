@@ -22,6 +22,8 @@ const AIChatbot = () => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [markerStartIndex, setMarkerStartIndex] = useState<number | null>(null);
   const [isButtonScroll, setIsButtonScroll] = useState(false);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
 
   const handleScroll = useCallback(() => {
     const chatContainer = chatContainerRef.current;
@@ -30,6 +32,10 @@ const AIChatbot = () => {
     const { scrollTop, scrollHeight, clientHeight } = chatContainer;
     const newIsScrolledToBottom = scrollHeight - scrollTop - clientHeight < 1;
     setIsScrolledToBottom(newIsScrolledToBottom);
+
+    // Check if we can scroll up or down
+    setCanScrollUp(scrollTop > 0);
+    setCanScrollDown(scrollHeight > scrollTop + clientHeight);
 
     // Clear existing timeout
     if (scrollTimeoutRef.current) {
@@ -166,9 +172,50 @@ const AIChatbot = () => {
     return `${markers.length - currentMarkerIndex}/${markers.length}`;
   };
 
+  const scrollToNextMessage = () => {
+    const chatContainer = chatContainerRef.current;
+    if (!chatContainer) return;
+
+    const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
+    const { scrollTop, clientHeight } = chatContainer;
+
+    for (let i = 0; i < messageElements.length; i++) {
+      const element = messageElements[i] as HTMLElement;
+      if (element.offsetTop > scrollTop + clientHeight) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+      }
+    }
+  };
+
+  const scrollToPreviousMessage = () => {
+    const chatContainer = chatContainerRef.current;
+    if (!chatContainer) return;
+
+    const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
+    const { scrollTop } = chatContainer;
+
+    for (let i = messageElements.length - 1; i >= 0; i--) {
+      const element = messageElements[i] as HTMLElement;
+      if (element.offsetTop < scrollTop) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+      }
+    }
+  };
+
   return (
     <div className="flex h-full relative chat-container">
-      <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
+      <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300 relative`}>
+        {canScrollUp && (
+          <button
+            onClick={scrollToPreviousMessage}
+            className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
+            aria-label="Scroll to previous message"
+          >
+            <ChevronUp size={20} />
+          </button>
+        )}
         <div 
           ref={chatContainerRef} 
           className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-hide"
@@ -188,6 +235,15 @@ const AIChatbot = () => {
             </div>
           ))}
         </div>
+        {canScrollDown && (
+          <button
+            onClick={scrollToNextMessage}
+            className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-10 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
+            aria-label="Scroll to next message"
+          >
+            <ChevronDown size={20} />
+          </button>
+        )}
         <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
           <div className="flex items-center space-x-2">
             <input
