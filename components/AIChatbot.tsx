@@ -68,8 +68,21 @@ const AIChatbot = () => {
       
       if (firstVisibleIndex >= 0 && lastVisibleIndex >= 0) {
         if (markerStartIndex === null) {
-          console.log('Setting marker start index');
-          setMarkerStartIndex(firstVisibleIndex);
+          console.log('Creating first marker');
+          const newMarker: Marker = {
+            start: firstVisibleIndex,
+            end: lastVisibleIndex,
+            id: Date.now(),
+            scrollPosition: scrollTop
+          };
+          setMarkers(prev => {
+            console.log('Previous markers:', prev);
+            console.log('New marker:', newMarker);
+            const updatedMarkers = [...prev, newMarker];
+            setCurrentMarkerIndex(updatedMarkers.length - 1);
+            return updatedMarkers;
+          });
+          setMarkerStartIndex(lastVisibleIndex);
         } else if (firstVisibleIndex !== markerStartIndex || lastVisibleIndex !== markerStartIndex) {
           console.log('Creating new marker');
           const newMarker: Marker = {
@@ -85,10 +98,10 @@ const AIChatbot = () => {
             setCurrentMarkerIndex(updatedMarkers.length - 1);
             return updatedMarkers;
           });
-          setMarkerStartIndex(null);
+          setMarkerStartIndex(lastVisibleIndex);
         }
       }
-    }, 500); // Reduced timeout for quicker response
+    }, 1000);
   }, [markerStartIndex, isButtonScroll]);
 
   useEffect(() => {
