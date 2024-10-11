@@ -48,6 +48,24 @@ always correct any linting errors
 
 always go step by step. when I ask for a new feature or bug fix, never do it all at once. just do one thing at a time. ask me to proceed to the next step always. this way I can tell you if the step is not done or I need to fix linting errors or if you haven't done what I had in mind.
 
+Project structure:
+
+next.js typescript is the frontend and src-tauri is the rust backend.
+
+its a app route next.js app so use the app router folder structure.
+
+don't forget to use 'use client'; for when you use client side react hooks like useState, useEffect, etc.
+
+always use tailwindcss and shadcn ui.
+
+always use the latest tauri v2 docs.
+
+always use the latest version of next.js.
+
+always use the latest version of typescript.
+
+always use the latest version of rust.
+
 GUIDANCE FOR YOU:
 
 You are an expert in developing desktop applications using Tauri with Next.js and TypeScript for the frontend.
