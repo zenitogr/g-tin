@@ -155,6 +155,12 @@ const AIChatbot = () => {
     setIsNavExpanded(!isNavExpanded);
   };
 
+  const getCurrentMarkerDisplay = () => {
+    if (markers.length === 0) return '-';
+    if (currentMarkerIndex === null) return '-';
+    return `${markers.length - currentMarkerIndex}/${markers.length}`;
+  };
+
   return (
     <div className="flex h-full relative chat-container">
       <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
@@ -215,6 +221,13 @@ const AIChatbot = () => {
             <ChevronUp size={24} />
             {isNavExpanded && <span className="ml-2">Previous</span>}
           </button>
+          <div className="chat-button bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white flex items-center justify-center">
+            {isNavExpanded ? (
+              <span>Current Marker: {getCurrentMarkerDisplay()}</span>
+            ) : (
+              <span>{getCurrentMarkerDisplay()}</span>
+            )}
+          </div>
           <button
             onClick={() => navigateMarkers('next')}
             className="chat-button bg-green-500 text-white"
