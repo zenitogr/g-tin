@@ -116,10 +116,29 @@ body {
   padding: 0.5rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+  width: 100%;
 }
 
 .chat-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.chat-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Navigation bar styles */
+.nav-expanded {
+  width: 33.333333%;
+}
+
+.nav-collapsed {
+  width: 3rem;
+}
+
+.nav-transition {
+  transition: width 0.3s ease-in-out;
 }

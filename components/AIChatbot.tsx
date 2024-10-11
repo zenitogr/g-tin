@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronDown, ChevronUp, ChevronsDown, Send } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsDown, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AIChatbot = () => {
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; id: number }>>([
@@ -13,6 +13,7 @@ const AIChatbot = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   const handleScroll = useCallback(() => {
     const chatContainer = chatContainerRef.current;
@@ -108,9 +109,13 @@ const AIChatbot = () => {
     scrollToMarker(newIndex);
   };
 
+  const toggleNav = () => {
+    setIsNavExpanded(!isNavExpanded);
+  };
+
   return (
     <div className="flex h-full relative chat-container">
-      <div className="flex-grow flex flex-col">
+      <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
         <div 
           ref={chatContainerRef} 
           className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-custom"
@@ -150,30 +155,42 @@ const AIChatbot = () => {
           </div>
         </div>
       </div>
-      <div className="w-12 flex flex-col justify-end space-y-2 p-2 bg-gray-100 dark:bg-gray-800">
+      <div className={`flex flex-col justify-between bg-gray-100 dark:bg-gray-800 transition-all duration-300 ${isNavExpanded ? 'w-1/3' : 'w-12'}`}>
         <button
-          onClick={() => navigateMarkers('prev')}
-          className="chat-button bg-green-500 text-white"
-          aria-label="Previous marker"
-          disabled={markers.length === 0}
+          onClick={toggleNav}
+          className="chat-button bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white self-start m-2"
+          aria-label={isNavExpanded ? "Collapse navigation" : "Expand navigation"}
         >
-          <ChevronUp size={24} />
+          {isNavExpanded ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
         </button>
-        <button
-          onClick={() => navigateMarkers('next')}
-          className="chat-button bg-green-500 text-white"
-          aria-label="Next marker"
-          disabled={markers.length === 0}
-        >
-          <ChevronDown size={24} />
-        </button>
-        <button
-          onClick={scrollToBottom}
-          className="chat-button bg-blue-500 text-white"
-          aria-label="Scroll to bottom"
-        >
-          <ChevronsDown size={24} />
-        </button>
+        <div className="flex flex-col justify-end space-y-2 p-2">
+          <button
+            onClick={() => navigateMarkers('prev')}
+            className="chat-button bg-green-500 text-white"
+            aria-label="Previous marker"
+            disabled={markers.length === 0}
+          >
+            <ChevronUp size={24} />
+            {isNavExpanded && <span className="ml-2">Previous</span>}
+          </button>
+          <button
+            onClick={() => navigateMarkers('next')}
+            className="chat-button bg-green-500 text-white"
+            aria-label="Next marker"
+            disabled={markers.length === 0}
+          >
+            <ChevronDown size={24} />
+            {isNavExpanded && <span className="ml-2">Next</span>}
+          </button>
+          <button
+            onClick={scrollToBottom}
+            className="chat-button bg-blue-500 text-white"
+            aria-label="Scroll to bottom"
+          >
+            <ChevronsDown size={24} />
+            {isNavExpanded && <span className="ml-2">Bottom</span>}
+          </button>
+        </div>
       </div>
     </div>
   );
