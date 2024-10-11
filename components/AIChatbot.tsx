@@ -212,46 +212,60 @@ const AIChatbot = () => {
         <div className="flex flex-col space-y-2 p-2">
           <button
             onClick={toggleNav}
-            className="chat-button bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white"
+            className="chat-button bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white h-10 overflow-hidden"
             aria-label={isNavExpanded ? "Collapse navigation" : "Expand navigation"}
           >
-            {isNavExpanded ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
-            {isNavExpanded && <span className="ml-2">Collapse</span>}
+            <div className="flex items-center justify-center w-full h-full">
+              {isNavExpanded ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
+              <span className={`ml-2 transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                Collapse
+              </span>
+            </div>
           </button>
         </div>
         <div className="flex flex-col space-y-2 p-2">
           <button
             onClick={() => navigateMarkers('prev')}
-            className="chat-button bg-green-500 text-white"
+            className="chat-button bg-green-500 text-white h-10 overflow-hidden"
             aria-label="Previous marker"
             disabled={markers.length === 0}
           >
-            <ChevronUp size={24} />
-            {isNavExpanded && <span className="ml-2">Previous</span>}
+            <div className="flex items-center justify-center w-full h-full">
+              <ChevronUp size={24} />
+              <span className={`ml-2 transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                Previous
+              </span>
+            </div>
           </button>
-          <div className="chat-button bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white flex items-center justify-center">
-            {isNavExpanded ? (
-              <span>Current Marker: {getCurrentMarkerDisplay()}</span>
-            ) : (
-              <span>{getCurrentMarkerDisplay()}</span>
-            )}
+          <div className="chat-button bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white flex items-center justify-center h-10 overflow-hidden">
+            <span className={`transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+              {isNavExpanded ? `Current Marker: ${getCurrentMarkerDisplay()}` : getCurrentMarkerDisplay()}
+            </span>
           </div>
           <button
             onClick={() => navigateMarkers('next')}
-            className="chat-button bg-green-500 text-white"
+            className="chat-button bg-green-500 text-white h-10 overflow-hidden"
             aria-label="Next marker"
             disabled={markers.length === 0}
           >
-            <ChevronDown size={24} />
-            {isNavExpanded && <span className="ml-2">Next</span>}
+            <div className="flex items-center justify-center w-full h-full">
+              <ChevronDown size={24} />
+              <span className={`ml-2 transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                Next
+              </span>
+            </div>
           </button>
           <button
             onClick={scrollToBottom}
-            className="chat-button bg-blue-500 text-white"
+            className="chat-button bg-blue-500 text-white h-10 overflow-hidden"
             aria-label="Scroll to bottom"
           >
-            <ChevronsDown size={24} />
-            {isNavExpanded && <span className="ml-2">Bottom</span>}
+            <div className="flex items-center justify-center w-full h-full">
+              <ChevronsDown size={24} />
+              <span className={`ml-2 transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                Bottom
+              </span>
+            </div>
           </button>
         </div>
       </div>
