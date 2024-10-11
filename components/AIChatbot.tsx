@@ -80,7 +80,9 @@ const AIChatbot = () => {
             setMarkers(prev => {
               console.log('Previous markers:', prev);
               console.log('New marker:', newMarker);
-              return [...prev, newMarker];
+              const updatedMarkers = [...prev, newMarker];
+              setCurrentMarkerIndex(updatedMarkers.length - 1); // Update current marker index
+              return updatedMarkers;
             });
             setMarkerStartIndex(null);
           }
