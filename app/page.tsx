@@ -154,9 +154,9 @@ export default function Home() {
   }, [messages, scrollToBottom]);
 
   return (
-    <div className="flex flex-col h-full max-w-6xl mx-auto">
-      <div className="flex flex-grow overflow-hidden">
-        <Card ref={chatRef} className="flex-grow overflow-y-auto p-4 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
+    <div className="flex flex-col h-full max-w-4xl mx-auto p-4">
+      <div className="flex flex-grow overflow-hidden rounded-lg shadow-lg">
+        <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-l-lg custom-scrollbar">
           {messages.map((message, index) => (
             <div key={index} className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}>
               <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
@@ -174,32 +174,33 @@ export default function Home() {
           onRemoveMarker={handleRemoveMarker}
         />
       </div>
-      <div className="flex space-x-2 p-4 bg-gray-800">
+      <div className="flex space-x-2 mt-3">
         <Input
           type="text"
           placeholder="Type your message..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+          className="flex-grow bg-gray-800 border-gray-700 text-white placeholder-gray-400 rounded-l-lg"
         />
-        <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+        <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-r-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
             <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
           </svg>
         </Button>
       </div>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 10px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: #1f2937;
+          border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background-color: #4b5563;
-          border-radius: 20px;
-          border: 3px solid #1f2937;
+          border-radius: 4px;
+          border: 2px solid #1f2937;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background-color: #6b7280;

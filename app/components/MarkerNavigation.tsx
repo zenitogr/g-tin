@@ -20,7 +20,7 @@ export default function MarkerNavigation({
   onRemoveMarker
 }: MarkerNavigationProps) {
   return (
-    <div className="flex flex-col items-center justify-between bg-gray-800 rounded-r-lg py-2 px-1 ml-1 h-full w-8">
+    <div className="flex flex-col items-center justify-between bg-gray-800 rounded-r-lg py-2 px-1 w-7">
       <div className="flex flex-col items-center mb-2">
         <div className="text-[10px] text-gray-400 mb-1">{totalMarkers}</div>
         <div className="text-[8px] text-gray-400 whitespace-nowrap">markers</div>
