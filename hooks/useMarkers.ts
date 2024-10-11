@@ -15,10 +15,8 @@ export function useMarkers() {
       scrollPosition,
     };
     setMarkers(prevMarkers => {
-      const updatedMarkers = [...prevMarkers, newMarker];
-      if (updatedMarkers.length === 1) {
-        setCurrentMarkerIndex(newMarker.id);
-      }
+      const updatedMarkers = [...prevMarkers, newMarker].sort((a, b) => a.scrollPosition - b.scrollPosition);
+      setCurrentMarkerIndex(newMarker.id);
       console.log('Marker added, new total:', updatedMarkers.length);
       return updatedMarkers;
     });
@@ -28,32 +26,31 @@ export function useMarkers() {
     setMarkers(prevMarkers => {
       const updatedMarkers = prevMarkers.filter(marker => marker.id !== id);
       console.log('Marker removed, new total:', updatedMarkers.length);
+      if (currentMarkerIndex === id) {
+        setCurrentMarkerIndex(updatedMarkers.length > 0 ? updatedMarkers[0].id : null);
+      }
       return updatedMarkers;
     });
-    if (currentMarkerIndex === id) {
-      setCurrentMarkerIndex(null);
-    }
   }, [currentMarkerIndex]);
 
-  const navigateMarker = (direction: 'up' | 'down'): number | null => {
+  const navigateMarker = useCallback((direction: 'up' | 'down'): number | null => {
     if (markers.length === 0) return null;
 
-    const sortedMarkers = [...markers].sort((a, b) => a.scrollPosition - b.scrollPosition);
-    const currentIndex = currentMarkerIndex !== null
-      ? sortedMarkers.findIndex(marker => marker.id === currentMarkerIndex)
-      : -1;
-
+    const currentIndex = markers.findIndex(marker => marker.id === currentMarkerIndex);
     let newIndex;
-    if (direction === 'up') {
-      newIndex = currentIndex > 0 ? currentIndex - 1 : sortedMarkers.length - 1;
+
+    if (currentIndex === -1) {
+      newIndex = direction === 'up' ? markers.length - 1 : 0;
+    } else if (direction === 'up') {
+      newIndex = currentIndex > 0 ? currentIndex - 1 : markers.length - 1;
     } else {
-      newIndex = currentIndex < sortedMarkers.length - 1 ? currentIndex + 1 : 0;
+      newIndex = currentIndex < markers.length - 1 ? currentIndex + 1 : 0;
     }
 
-    const newMarkerIndex = sortedMarkers[newIndex].id;
+    const newMarkerIndex = markers[newIndex].id;
     setCurrentMarkerIndex(newMarkerIndex);
     return newMarkerIndex;
-  };
+  }, [markers, currentMarkerIndex]);
 
   return {
     markers,

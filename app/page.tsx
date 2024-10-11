@@ -43,25 +43,29 @@ export default function Home() {
     }
   }, []);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (inputMessage.trim()) {
       shouldScrollRef.current = isScrolledToBottom();
-      setMessages(prevMessages => {
-        const newMessages = [...prevMessages, { text: inputMessage, isUser: true }];
-        setTimeout(scrollToBottom, 0);
-        return newMessages;
-      });
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { text: inputMessage, isUser: true }
+      ]);
       setInputMessage('');
+
+      // Simulate AI response
       setTimeout(() => {
         shouldScrollRef.current = isScrolledToBottom();
-        setMessages(prevMessages => {
-          const newMessages = [...prevMessages, { text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }];
-          setTimeout(scrollToBottom, 0);
-          return newMessages;
-        });
+        setMessages(prevMessages => [
+          ...prevMessages,
+          { text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }
+        ]);
+        scrollToBottom();
       }, 1000);
+
+      // Scroll to bottom after user message is added
+      setTimeout(scrollToBottom, 0);
     }
-  };
+  }, [inputMessage, isScrolledToBottom, scrollToBottom]);
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -99,7 +103,6 @@ export default function Home() {
         scrollToMarker(marker.scrollPosition);
       }
     }
-    // Reset the flag after a short delay
     setTimeout(() => {
       isNavigatingRef.current = false;
     }, 100);
