@@ -19,6 +19,7 @@ export default function Home() {
   const shouldScrollRef = useRef(true);
   const lastScrollPositionRef = useRef(0);
   const isNavigatingRef = useRef(false);
+  const isAutoScrollingRef = useRef(false);
 
   useEffect(() => {
     setForceUpdate({});
@@ -27,14 +28,18 @@ export default function Home() {
   const isScrolledToBottom = useCallback(() => {
     if (chatRef.current) {
       const { scrollHeight, clientHeight, scrollTop } = chatRef.current;
-      return scrollHeight - clientHeight <= scrollTop + 20; // Allow 20px margin
+      return Math.abs(scrollHeight - clientHeight - scrollTop) < 1;
     }
     return false;
   }, []);
 
   const scrollToBottom = useCallback(() => {
     if (chatRef.current && shouldScrollRef.current) {
+      isAutoScrollingRef.current = true;
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      setTimeout(() => {
+        isAutoScrollingRef.current = false;
+      }, 100);
     }
   }, []);
 
@@ -102,7 +107,7 @@ export default function Home() {
   }, [navigateMarker, markers, scrollToMarker]);
 
   const handleScroll = useCallback(() => {
-    if (chatRef.current && !isNavigatingRef.current) {
+    if (chatRef.current && !isNavigatingRef.current && !isAutoScrollingRef.current) {
       const currentScrollPosition = chatRef.current.scrollTop;
       
       // Clear existing timer
@@ -110,8 +115,8 @@ export default function Home() {
         clearTimeout(scrollTimerRef.current);
       }
 
-      // Set new timer only if the scroll position has changed
-      if (currentScrollPosition !== lastScrollPositionRef.current) {
+      // Set new timer only if the scroll position has changed and not at the bottom
+      if (currentScrollPosition !== lastScrollPositionRef.current && !isScrolledToBottom()) {
         scrollTimerRef.current = setTimeout(() => {
           handleAddMarker();
         }, 2000);
@@ -119,7 +124,7 @@ export default function Home() {
 
       lastScrollPositionRef.current = currentScrollPosition;
     }
-  }, [handleAddMarker]);
+  }, [handleAddMarker, isScrolledToBottom]);
 
   const getCurrentMarkerNumber = useCallback(() => {
     if (currentMarkerIndex === null) return 0;
