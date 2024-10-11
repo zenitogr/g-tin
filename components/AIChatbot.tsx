@@ -171,7 +171,7 @@ const AIChatbot = () => {
       <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
         <div 
           ref={chatContainerRef} 
-          className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-custom"
+          className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-hide"
         >
           {messages.map((message, index) => (
             <div 
@@ -208,7 +208,7 @@ const AIChatbot = () => {
           </div>
         </div>
       </div>
-      <div className={`flex flex-col justify-between bg-gray-100 dark:bg-gray-800 transition-all duration-300 ${isNavExpanded ? 'w-1/3' : 'w-12'}`}>
+      <div className={`flex flex-col justify-between bg-gray-100 dark:bg-gray-800 transition-all duration-300 overflow-y-scroll scrollbar-hide ${isNavExpanded ? 'w-1/3' : 'w-12'}`}>
         <div className="flex flex-col space-y-2 p-1">
           <button
             onClick={toggleNav}
