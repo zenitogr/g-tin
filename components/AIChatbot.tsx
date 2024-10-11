@@ -21,10 +21,11 @@ const AIChatbot = () => {
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [markerStartIndex, setMarkerStartIndex] = useState<number | null>(null);
+  const [isButtonScroll, setIsButtonScroll] = useState(false);
 
   const handleScroll = useCallback(() => {
     const chatContainer = chatContainerRef.current;
-    if (!chatContainer) return;
+    if (!chatContainer || isButtonScroll) return;
 
     const { scrollTop, scrollHeight, clientHeight } = chatContainer;
     const newIsScrolledToBottom = scrollHeight - scrollTop - clientHeight < 1;
@@ -83,7 +84,7 @@ const AIChatbot = () => {
         setMarkerStartIndex(null);
       }
     }, 2000);
-  }, [markerStartIndex]);
+  }, [markerStartIndex, isButtonScroll]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -110,8 +111,10 @@ const AIChatbot = () => {
   }, []); // Empty dependency array ensures this runs only once on mount
 
   const scrollToBottom = () => {
+    setIsButtonScroll(true);
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      setTimeout(() => setIsButtonScroll(false), 1000); // Reset after scroll animation
     }
   };
 
@@ -128,11 +131,13 @@ const AIChatbot = () => {
   };
 
   const scrollToMarker = (index: number) => {
+    setIsButtonScroll(true);
     if (chatContainerRef.current && markers[index]) {
       const markerStartElement = document.getElementById(`message-${markers[index].start}`);
       if (markerStartElement) {
         markerStartElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setCurrentMarkerIndex(index);
+        setTimeout(() => setIsButtonScroll(false), 1000); // Reset after scroll animation
       }
     }
   };
