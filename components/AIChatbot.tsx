@@ -45,55 +45,50 @@ const AIChatbot = () => {
 
     // Set new timeout
     scrollTimeoutRef.current = setTimeout(() => {
-      if (!newIsScrolledToBottom) {
-        const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
-        let firstVisibleIndex = -1;
-        let lastVisibleIndex = -1;
+      const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
+      let firstVisibleIndex = -1;
+      let lastVisibleIndex = -1;
 
-        messageElements.forEach((el, index) => {
-          const rect = el.getBoundingClientRect();
-          const topVisible = rect.top >= 0 && rect.top < clientHeight;
-          const bottomVisible = rect.bottom > 0 && rect.bottom <= clientHeight;
+      messageElements.forEach((el, index) => {
+        const rect = el.getBoundingClientRect();
+        const topVisible = rect.top >= 0 && rect.top < clientHeight;
+        const bottomVisible = rect.bottom > 0 && rect.bottom <= clientHeight;
 
-          if ((topVisible || bottomVisible) && firstVisibleIndex === -1) {
-            firstVisibleIndex = index;
-          }
-          if (topVisible || bottomVisible) {
-            lastVisibleIndex = index;
-          }
-        });
-
-        console.log('First visible message index:', firstVisibleIndex);
-        console.log('Last visible message index:', lastVisibleIndex);
-        console.log('Current marker start index:', markerStartIndex);
-        
-        if (firstVisibleIndex >= 0 && lastVisibleIndex >= 0) {
-          if (markerStartIndex === null) {
-            console.log('Setting marker start index');
-            setMarkerStartIndex(firstVisibleIndex);
-          } else {
-            console.log('Creating new marker');
-            const newMarker: Marker = {
-              start: markerStartIndex,
-              end: lastVisibleIndex,
-              id: Date.now(),
-              scrollPosition: scrollTop // Add this line
-            };
-            setMarkers(prev => {
-              console.log('Previous markers:', prev);
-              console.log('New marker:', newMarker);
-              const updatedMarkers = [...prev, newMarker];
-              setCurrentMarkerIndex(updatedMarkers.length - 1); // Update current marker index
-              return updatedMarkers;
-            });
-            setMarkerStartIndex(null);
-          }
+        if ((topVisible || bottomVisible) && firstVisibleIndex === -1) {
+          firstVisibleIndex = index;
         }
-      } else {
-        console.log('Scrolled to bottom, resetting marker start index');
-        setMarkerStartIndex(null);
+        if (topVisible || bottomVisible) {
+          lastVisibleIndex = index;
+        }
+      });
+
+      console.log('First visible message index:', firstVisibleIndex);
+      console.log('Last visible message index:', lastVisibleIndex);
+      console.log('Current marker start index:', markerStartIndex);
+      
+      if (firstVisibleIndex >= 0 && lastVisibleIndex >= 0) {
+        if (markerStartIndex === null) {
+          console.log('Setting marker start index');
+          setMarkerStartIndex(firstVisibleIndex);
+        } else if (firstVisibleIndex !== markerStartIndex || lastVisibleIndex !== markerStartIndex) {
+          console.log('Creating new marker');
+          const newMarker: Marker = {
+            start: Math.min(markerStartIndex, firstVisibleIndex),
+            end: Math.max(markerStartIndex, lastVisibleIndex),
+            id: Date.now(),
+            scrollPosition: scrollTop
+          };
+          setMarkers(prev => {
+            console.log('Previous markers:', prev);
+            console.log('New marker:', newMarker);
+            const updatedMarkers = [...prev, newMarker];
+            setCurrentMarkerIndex(updatedMarkers.length - 1);
+            return updatedMarkers;
+          });
+          setMarkerStartIndex(null);
+        }
       }
-    }, 2000);
+    }, 500); // Reduced timeout for quicker response
   }, [markerStartIndex, isButtonScroll]);
 
   useEffect(() => {
