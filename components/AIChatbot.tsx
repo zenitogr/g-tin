@@ -3,17 +3,24 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronUp, ChevronsDown, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
+interface Marker {
+  start: number;
+  end: number;
+  id: number;
+}
+
 const AIChatbot = () => {
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; id: number }>>([
     { text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false, id: Date.now() }
   ]);
   const [inputMessage, setInputMessage] = useState('');
-  const [markers, setMarkers] = useState<number[]>([]);
+  const [markers, setMarkers] = useState<Marker[]>([]);
   const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [markerStartIndex, setMarkerStartIndex] = useState<number | null>(null);
 
   const handleScroll = useCallback(() => {
     const chatContainer = chatContainerRef.current;
@@ -32,16 +39,34 @@ const AIChatbot = () => {
     scrollTimeoutRef.current = setTimeout(() => {
       if (!newIsScrolledToBottom) {
         const lastVisibleMessageIndex = Math.floor((scrollTop + clientHeight) / 50) - 1;
-        if (lastVisibleMessageIndex >= 0 && !markers.includes(lastVisibleMessageIndex)) {
-          setMarkers(prev => {
-            const newMarkers = [...prev, lastVisibleMessageIndex].sort((a, b) => a - b);
-            setCurrentMarkerIndex(newMarkers.indexOf(lastVisibleMessageIndex));
-            return newMarkers;
-          });
+        console.log('Last visible message index:', lastVisibleMessageIndex);
+        console.log('Current marker start index:', markerStartIndex);
+        
+        if (lastVisibleMessageIndex >= 0) {
+          if (markerStartIndex === null) {
+            console.log('Setting marker start index');
+            setMarkerStartIndex(lastVisibleMessageIndex);
+          } else {
+            console.log('Creating new marker');
+            const newMarker: Marker = {
+              start: markerStartIndex,
+              end: lastVisibleMessageIndex,
+              id: Date.now()
+            };
+            setMarkers(prev => {
+              console.log('Previous markers:', prev);
+              console.log('New marker:', newMarker);
+              return [...prev, newMarker];
+            });
+            setMarkerStartIndex(null);
+          }
         }
+      } else {
+        console.log('Scrolled to bottom, resetting marker start index');
+        setMarkerStartIndex(null);
       }
-    }, 2000); // Changed from 3000 to 2000 milliseconds
-  }, [markers]);
+    }, 2000);
+  }, [markerStartIndex]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -86,10 +111,10 @@ const AIChatbot = () => {
   };
 
   const scrollToMarker = (index: number) => {
-    if (chatContainerRef.current && markers[index] !== undefined) {
-      const markerElement = document.getElementById(`message-${markers[index]}`);
-      if (markerElement) {
-        markerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (chatContainerRef.current && markers[index]) {
+      const markerStartElement = document.getElementById(`message-${markers[index].start}`);
+      if (markerStartElement) {
+        markerStartElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setCurrentMarkerIndex(index);
       }
     }
@@ -129,8 +154,8 @@ const AIChatbot = () => {
               <div className={`message ${message.isUser ? 'message-user' : 'message-ai'}`}>
                 {message.text}
               </div>
-              {markers.includes(index) && (
-                <div className="w-full h-0.5 bg-red-500 absolute bottom-0 left-0" />
+              {markers.some(marker => index >= marker.start && index <= marker.end) && (
+                <div className="w-1 bg-red-500 absolute top-0 bottom-0 right-0" />
               )}
             </div>
           ))}
