@@ -181,7 +181,8 @@ const AIChatbot = () => {
 
     for (let i = 0; i < messageElements.length; i++) {
       const element = messageElements[i] as HTMLElement;
-      if (element.offsetTop > scrollTop) {
+      const elementBottom = element.offsetTop + element.offsetHeight;
+      if (elementBottom > scrollTop + clientHeight) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         break;
       }
