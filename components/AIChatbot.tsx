@@ -13,6 +13,7 @@ const AIChatbot = () => {
     inputMessage,
     setInputMessage,
     markers,
+    currentMarkerIndex,
     handleSendMessage,
     handleScroll,
     navigateMarkers,
@@ -31,21 +32,20 @@ const AIChatbot = () => {
       navigateMarkers={navigateMarkers}
       scrollToBottom={scrollToBottom}
       markersLength={markers.length}
+      currentMarkerIndex={currentMarkerIndex}
     >
       <div 
         ref={chatContainerRef} 
-        className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-custom"
+        className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-custom bg-gray-900"
         onScroll={handleScroll}
       >
         <ChatMessages messages={messages} markers={markers} />
       </div>
-      <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
-        <ChatInput
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-          handleSendMessage={handleSendMessage}
-        />
-      </div>
+      <ChatInput
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+        handleSendMessage={handleSendMessage}
+      />
     </ChatLayout>
   );
 };

@@ -8,13 +8,13 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ inputMessage, setInputMessage, handleSendMessage }) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 bg-gray-800 p-4">
       <input
         type="text"
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-        className="chat-input flex-grow"
+        className="chat-input flex-grow bg-gray-700 text-white"
         placeholder="Type your message..."
       />
       <button
