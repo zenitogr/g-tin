@@ -4,8 +4,9 @@ import { useState, KeyboardEvent, useRef, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import MarkerNavigation from './components/MarkerNavigation';
+import MarkerNavigation from '@/components/MarkerNavigation';
 import { useMarkers } from '@/hooks/useMarkers';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -157,13 +158,22 @@ export default function Home() {
     <div className="flex flex-col h-full">
       <div className="flex flex-grow overflow-hidden">
         <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
-          {messages.map((message, index) => (
-            <div key={index} className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}>
-              <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
-                {message.text}
-              </span>
-            </div>
-          ))}
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}
+              >
+                <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
+                  {message.text}
+                </span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </Card>
         <MarkerNavigation
           currentMarkerNumber={getCurrentMarkerNumber()}
@@ -174,7 +184,12 @@ export default function Home() {
           onRemoveMarker={handleRemoveMarker}
         />
       </div>
-      <div className="flex space-x-2 p-2 bg-gray-800">
+      <motion.div 
+        className="flex space-x-2 p-2 bg-gray-800"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <Input
           type="text"
           placeholder="Type your message..."
@@ -183,12 +198,16 @@ export default function Home() {
           onKeyPress={handleKeyPress}
           className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-l-lg"
         />
-        <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-r-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-          </svg>
-        </Button>
-      </div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-r-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+              <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+            </svg>
+          </Button>
+        </motion.div>
+      </motion.div>
+      {/* Add padding to account for the fixed navbar */}
+      <div className="h-14"></div>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
