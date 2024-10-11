@@ -242,7 +242,7 @@ const AIChatbot = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="chat-input flex-grow"
+              className="chat-input flex-grow bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border-none rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Type your message..."
             />
             <button
