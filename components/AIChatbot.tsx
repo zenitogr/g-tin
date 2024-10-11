@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronUp, ChevronsDown, Send, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion'; // Add this import
 
 interface Marker {
   id: number;
@@ -200,6 +201,13 @@ const AIChatbot = () => {
     }
   };
 
+  // Add this animation variant
+  const messageVariants = {
+    initial: { opacity: 0, y: 50 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -50 }
+  };
+
   return (
     <div className="flex h-full relative chat-container">
       <div className={`flex-grow flex flex-col ${isNavExpanded ? 'w-2/3' : 'w-full'} transition-all duration-300 relative`}>
@@ -216,20 +224,27 @@ const AIChatbot = () => {
           ref={chatContainerRef} 
           className="flex-grow overflow-y-scroll p-4 space-y-4 scrollbar-hide"
         >
-          {messages.map((message, index) => (
-            <div 
-              key={message.id} 
-              id={`message-${index}`}
-              className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} relative`}
-            >
-              <div className={`message ${message.isUser ? 'message-user' : 'message-ai'}`}>
-                {message.text}
-              </div>
-              {markers.some(marker => marker.messageIds.includes(index)) && (
-                <div className="w-1 bg-red-500 absolute top-0 bottom-0 right-0" />
-              )}
-            </div>
-          ))}
+          <AnimatePresence initial={false}>
+            {messages.map((message, index) => (
+              <motion.div 
+                key={message.id} 
+                id={`message-${index}`}
+                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} relative`}
+                variants={messageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <div className={`message ${message.isUser ? 'message-user' : 'message-ai'}`}>
+                  {message.text}
+                </div>
+                {markers.some(marker => marker.messageIds.includes(index)) && (
+                  <div className="w-1 bg-red-500 absolute top-0 bottom-0 right-0" />
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         {canScrollDown && (
           <button
