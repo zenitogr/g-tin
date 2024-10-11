@@ -238,9 +238,12 @@ const AIChatbot = () => {
             </div>
           </button>
           <div className="chat-button bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white flex items-center justify-center h-10 overflow-hidden">
-            <span className={`transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
-              {isNavExpanded ? `Current Marker: ${getCurrentMarkerDisplay()}` : getCurrentMarkerDisplay()}
-            </span>
+            <div className="flex items-center justify-center w-full h-full whitespace-nowrap">
+              <span className={`transition-opacity duration-300 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                Marker:
+              </span>
+              <span className="ml-1">{getCurrentMarkerDisplay()}</span>
+            </div>
           </div>
           <button
             onClick={() => navigateMarkers('next')}
