@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface Marker {
   id: number;
@@ -9,7 +9,7 @@ export function useMarkers() {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
 
-  const addMarker = (messageIndex: number) => {
+  const addMarker = useCallback((messageIndex: number) => {
     const newMarker: Marker = {
       id: Date.now(),
       messageIndex,
@@ -19,16 +19,21 @@ export function useMarkers() {
       if (updatedMarkers.length === 1) {
         setCurrentMarkerIndex(newMarker.id);
       }
+      console.log('Marker added, new total:', updatedMarkers.length);
       return updatedMarkers;
     });
-  };
+  }, []);
 
-  const removeMarker = (id: number) => {
-    setMarkers(prevMarkers => prevMarkers.filter(marker => marker.id !== id));
+  const removeMarker = useCallback((id: number) => {
+    setMarkers(prevMarkers => {
+      const updatedMarkers = prevMarkers.filter(marker => marker.id !== id);
+      console.log('Marker removed, new total:', updatedMarkers.length);
+      return updatedMarkers;
+    });
     if (currentMarkerIndex === id) {
       setCurrentMarkerIndex(null);
     }
-  };
+  }, [currentMarkerIndex]);
 
   const navigateMarker = (direction: 'up' | 'down'): number | null => {
     if (markers.length === 0) return null;

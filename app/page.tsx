@@ -15,6 +15,11 @@ export default function Home() {
   const chatRef = useRef<HTMLDivElement>(null);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker } = useMarkers();
+  const [, setForceUpdate] = useState({});
+
+  useEffect(() => {
+    setForceUpdate({});
+  }, [markers]);
 
   const handleSendMessage = () => {
     if (inputMessage.trim()) {
@@ -37,14 +42,16 @@ export default function Home() {
       const scrollPosition = chatRef.current.scrollTop;
       const messageIndex = Math.floor(scrollPosition / 50); // Assuming each message is roughly 50px tall
       addMarker(messageIndex);
+      console.log('Marker added, total markers:', markers.length + 1);
     }
-  }, [addMarker]);
+  }, [addMarker, markers.length]);
 
-  const handleRemoveMarker = () => {
+  const handleRemoveMarker = useCallback(() => {
     if (currentMarkerIndex !== null) {
       removeMarker(currentMarkerIndex);
+      console.log('Marker removed, total markers:', markers.length - 1);
     }
-  };
+  }, [currentMarkerIndex, removeMarker, markers.length]);
 
   const scrollToMarker = useCallback((messageIndex: number) => {
     if (chatRef.current) {
