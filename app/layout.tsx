@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import dynamic from 'next/dynamic';
+import DynamicNav from '@/components/DynamicNav';
 
 const inter = Inter({ subsets: ["latin"] });
-
-const DynamicNav = dynamic(() => import('@/components/DynamicNav'), { ssr: false });
 
 export const metadata: Metadata = {
   title: "g-tin",

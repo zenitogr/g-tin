@@ -5,12 +5,7 @@ import { motion } from 'framer-motion';
 
 export default function DynamicNav() {
   return (
-    <motion.nav 
-      className="bg-gray-800 py-1 px-2 fixed bottom-0 left-0 right-0 h-14"
-      initial={{ y: 50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
+    <nav className="bg-gray-800 py-1 px-2 fixed bottom-0 left-0 right-0 h-14">
       <ul className="flex justify-around items-center h-full">
         {['Home', 'About', 'Contact'].map((item) => (
           <motion.li key={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
@@ -23,6 +18,6 @@ export default function DynamicNav() {
           </motion.li>
         ))}
       </ul>
-    </motion.nav>
+    </nav>
   );
 }
