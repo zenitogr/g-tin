@@ -209,14 +209,17 @@ const AIChatbot = () => {
         </div>
       </div>
       <div className={`flex flex-col justify-between bg-gray-100 dark:bg-gray-800 transition-all duration-300 ${isNavExpanded ? 'w-1/3' : 'w-12'}`}>
-        <button
-          onClick={toggleNav}
-          className="chat-button bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white self-start m-2"
-          aria-label={isNavExpanded ? "Collapse navigation" : "Expand navigation"}
-        >
-          {isNavExpanded ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
-        </button>
-        <div className="flex flex-col justify-end space-y-2 p-2">
+        <div className="flex flex-col space-y-2 p-2">
+          <button
+            onClick={toggleNav}
+            className="chat-button bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white"
+            aria-label={isNavExpanded ? "Collapse navigation" : "Expand navigation"}
+          >
+            {isNavExpanded ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
+            {isNavExpanded && <span className="ml-2">Collapse</span>}
+          </button>
+        </div>
+        <div className="flex flex-col space-y-2 p-2">
           <button
             onClick={() => navigateMarkers('prev')}
             className="chat-button bg-green-500 text-white"
