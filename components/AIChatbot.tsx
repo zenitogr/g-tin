@@ -183,17 +183,18 @@ const AIChatbot = () => {
 
     for (let i = 0; i < messageElements.length; i++) {
       const element = messageElements[i] as HTMLElement;
-      const elementTop = element.offsetTop;
+      const elementBottom = element.offsetTop + element.offsetHeight;
       
-      if (elementTop > scrollTop) {
+      if (elementBottom > scrollTop + clientHeight) {
         nextMessageToScroll = element;
         break;
       }
     }
 
     if (nextMessageToScroll) {
+      const scrollPosition = nextMessageToScroll.offsetTop + nextMessageToScroll.offsetHeight - clientHeight;
       chatContainer.scrollTo({
-        top: nextMessageToScroll.offsetTop,
+        top: scrollPosition,
         behavior: 'smooth'
       });
     }
