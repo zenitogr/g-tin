@@ -176,9 +176,9 @@ export default function Home() {
           onKeyPress={handleKeyPress}
           className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400"
         />
-        <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l7-7 7 7" />
+        <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
           </svg>
         </Button>
       </div>
