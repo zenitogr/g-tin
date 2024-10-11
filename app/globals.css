@@ -95,16 +95,38 @@ body {
 /* Input styles */
 .chat-input {
   border: 1px solid var(--chat-border);
-  border-radius: 0.5rem;
+  border-radius: 9999px; /* Make it fully rounded */
   padding: 0.5rem 1rem;
   font-size: 1rem;
   line-height: 1.5;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
 }
 
 .chat-input:focus {
   outline: none;
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Send button styles */
+.chat-button-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+}
+
+.chat-button-send:hover {
+  background-color: #2563eb; /* Darker blue on hover */
+}
+
+.chat-button-send:focus {
+  outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 

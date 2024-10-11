@@ -136,7 +136,7 @@ const AIChatbot = () => {
           ))}
         </div>
         <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex space-x-2 items-center">
+          <div className="flex items-center space-x-2">
             <input
               type="text"
               value={inputMessage}
@@ -147,7 +147,7 @@ const AIChatbot = () => {
             />
             <button
               onClick={handleSendMessage}
-              className="chat-button bg-blue-500 text-white"
+              className="chat-button-send bg-blue-500 text-white p-2 rounded-full flex-shrink-0"
               aria-label="Send message"
             >
               <Send size={20} />
