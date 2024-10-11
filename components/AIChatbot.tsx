@@ -4,10 +4,9 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronUp, ChevronsDown, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Marker {
-  start: number;
-  end: number;
   id: number;
-  scrollPosition: number; // Add this line
+  messageIds: number[]; // Array of message IDs that were visible when the marker was created
+  scrollPosition: number;
 }
 
 const AIChatbot = () => {
@@ -34,75 +33,43 @@ const AIChatbot = () => {
     const newIsScrolledToBottom = scrollHeight - scrollTop - clientHeight < 1;
     setIsScrolledToBottom(newIsScrolledToBottom);
 
-    // Check if we can scroll up or down
     setCanScrollUp(scrollTop > 0);
     setCanScrollDown(scrollHeight > scrollTop + clientHeight);
 
-    // Clear existing timeout
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
 
-    // Set new timeout
     scrollTimeoutRef.current = setTimeout(() => {
       const messageElements = chatContainer.querySelectorAll('[id^="message-"]');
-      let firstVisibleIndex = -1;
-      let lastVisibleIndex = -1;
+      const visibleMessageIds: number[] = [];
 
-      messageElements.forEach((el, index) => {
+      messageElements.forEach((el) => {
         const rect = el.getBoundingClientRect();
         const topVisible = rect.top >= 0 && rect.top < clientHeight;
         const bottomVisible = rect.bottom > 0 && rect.bottom <= clientHeight;
 
-        if ((topVisible || bottomVisible) && firstVisibleIndex === -1) {
-          firstVisibleIndex = index;
-        }
         if (topVisible || bottomVisible) {
-          lastVisibleIndex = index;
+          const messageId = parseInt(el.id.split('-')[1]);
+          visibleMessageIds.push(messageId);
         }
       });
 
-      console.log('First visible message index:', firstVisibleIndex);
-      console.log('Last visible message index:', lastVisibleIndex);
-      console.log('Current marker start index:', markerStartIndex);
-      
-      if (firstVisibleIndex >= 0 && lastVisibleIndex >= 0) {
-        if (markerStartIndex === null) {
-          console.log('Creating first marker');
-          const newMarker: Marker = {
-            start: firstVisibleIndex,
-            end: lastVisibleIndex,
-            id: Date.now(),
-            scrollPosition: scrollTop
-          };
-          setMarkers(prev => {
-            console.log('Previous markers:', prev);
-            console.log('New marker:', newMarker);
-            const updatedMarkers = [...prev, newMarker];
-            setCurrentMarkerIndex(updatedMarkers.length - 1);
-            return updatedMarkers;
-          });
-          setMarkerStartIndex(lastVisibleIndex);
-        } else if (firstVisibleIndex !== markerStartIndex || lastVisibleIndex !== markerStartIndex) {
-          console.log('Creating new marker');
-          const newMarker: Marker = {
-            start: Math.min(markerStartIndex, firstVisibleIndex),
-            end: Math.max(markerStartIndex, lastVisibleIndex),
-            id: Date.now(),
-            scrollPosition: scrollTop
-          };
-          setMarkers(prev => {
-            console.log('Previous markers:', prev);
-            console.log('New marker:', newMarker);
-            const updatedMarkers = [...prev, newMarker];
-            setCurrentMarkerIndex(updatedMarkers.length - 1);
-            return updatedMarkers;
-          });
-          setMarkerStartIndex(lastVisibleIndex);
-        }
+      if (visibleMessageIds.length > 0) {
+        const newMarker: Marker = {
+          id: Date.now(),
+          messageIds: visibleMessageIds,
+          scrollPosition: scrollTop
+        };
+
+        setMarkers(prev => {
+          const updatedMarkers = [...prev, newMarker];
+          setCurrentMarkerIndex(updatedMarkers.length - 1);
+          return updatedMarkers;
+        });
       }
     }, 1000);
-  }, [markerStartIndex, isButtonScroll]);
+  }, [isButtonScroll]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -253,7 +220,7 @@ const AIChatbot = () => {
               <div className={`message ${message.isUser ? 'message-user' : 'message-ai'}`}>
                 {message.text}
               </div>
-              {markers.some(marker => index >= marker.start && index <= marker.end) && (
+              {markers.some(marker => marker.messageIds.includes(index)) && (
                 <div className="w-1 bg-red-500 absolute top-0 bottom-0 right-0" />
               )}
             </div>
