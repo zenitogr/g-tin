@@ -7,6 +7,7 @@ interface Marker {
   start: number;
   end: number;
   id: number;
+  scrollPosition: number; // Add this line
 }
 
 const AIChatbot = () => {
@@ -75,7 +76,8 @@ const AIChatbot = () => {
             const newMarker: Marker = {
               start: markerStartIndex,
               end: lastVisibleIndex,
-              id: Date.now()
+              id: Date.now(),
+              scrollPosition: scrollTop // Add this line
             };
             setMarkers(prev => {
               console.log('Previous markers:', prev);
@@ -141,12 +143,12 @@ const AIChatbot = () => {
   const scrollToMarker = (index: number) => {
     setIsButtonScroll(true);
     if (chatContainerRef.current && markers[index]) {
-      const markerStartElement = document.getElementById(`message-${markers[index].start}`);
-      if (markerStartElement) {
-        markerStartElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setCurrentMarkerIndex(index);
-        setTimeout(() => setIsButtonScroll(false), 1000); // Reset after scroll animation
-      }
+      chatContainerRef.current.scrollTo({
+        top: markers[index].scrollPosition,
+        behavior: 'smooth'
+      });
+      setCurrentMarkerIndex(index);
+      setTimeout(() => setIsButtonScroll(false), 1000); // Reset after scroll animation
     }
   };
 
