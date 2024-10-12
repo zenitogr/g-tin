@@ -11,7 +11,8 @@ import { useMessageCollections } from '@/hooks/useMessageCollections';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState([
     { text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false }
   ]);
@@ -157,9 +158,17 @@ export default function Home() {
   }, [currentCollectionIndex, collections, removeCollection]);
 
   useEffect(() => {
-    // Simulate a short delay to ensure all components are ready
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
+    console.log("Home component useEffect running");
+    try {
+      // Add a small delay to ensure all resources are loaded
+      setTimeout(() => {
+        console.log("Setting isPageLoaded to true");
+        setIsPageLoaded(true);
+      }, 1000);
+    } catch (err) {
+      console.error("Error in Home component:", err);
+      setError(err instanceof Error ? err.message : String(err));
+    }
   }, []);
 
   useEffect(() => {
@@ -181,8 +190,12 @@ export default function Home() {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  if (!isLoaded) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (error) {
+    return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
+  }
+
+  if (!isPageLoaded) {
+    return <div className="flex justify-center items-center h-screen">Loading... (Home component)</div>;
   }
 
   return (
@@ -196,23 +209,25 @@ export default function Home() {
           onAddCollection={handleAddCollection}
           onRemoveCollection={handleRemoveCollection}
         />
-        <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
-          <AnimatePresence>
-            {messages.map((message, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}
-              >
-                <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
-                  {message.text}
-                </span>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+        <Card className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
+          <div ref={chatRef}>
+            <AnimatePresence>
+              {messages.map((message, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}
+                >
+                  <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
+                    {message.text}
+                  </span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         </Card>
         <MarkerNavigation
           currentMarkerNumber={getCurrentMarkerNumber()}
