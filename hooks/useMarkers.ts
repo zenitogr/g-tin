@@ -1,62 +1,46 @@
 import { useState, useCallback } from 'react';
-
-export interface Marker {
-  id: number;
-  scrollPosition: number;
-}
+import { Marker } from '@/types/marker';
 
 export function useMarkers() {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
 
   const addMarker = useCallback((scrollPosition: number) => {
-    const newMarker: Marker = {
-      id: Date.now(),
-      scrollPosition,
-    };
-    setMarkers(prevMarkers => {
-      const updatedMarkers = [...prevMarkers, newMarker].sort((a, b) => a.scrollPosition - b.scrollPosition);
-      setCurrentMarkerIndex(newMarker.id);
-      console.log('Marker added, new total:', updatedMarkers.length);
-      return updatedMarkers;
-    });
+    setMarkers(prevMarkers => [
+      ...prevMarkers,
+      { id: Date.now(), scrollPosition, isCurrent: false }
+    ]);
   }, []);
 
-  const removeMarker = useCallback((id: number) => {
-    setMarkers(prevMarkers => {
-      const updatedMarkers = prevMarkers.filter(marker => marker.id !== id);
-      console.log('Marker removed, new total:', updatedMarkers.length);
-      if (currentMarkerIndex === id) {
-        setCurrentMarkerIndex(updatedMarkers.length > 0 ? updatedMarkers[0].id : null);
-      }
-      return updatedMarkers;
-    });
+  const removeMarker = useCallback((index: number) => {
+    setMarkers(prevMarkers => prevMarkers.filter((_, i) => i !== index));
+    if (currentMarkerIndex === index) {
+      setCurrentMarkerIndex(null);
+    }
   }, [currentMarkerIndex]);
 
-  const navigateMarker = useCallback((direction: 'up' | 'down'): number | null => {
+  const navigateMarker = useCallback((direction: 'up' | 'down') => {
     if (markers.length === 0) return null;
 
-    const currentIndex = markers.findIndex(marker => marker.id === currentMarkerIndex);
-    let newIndex;
-
-    if (currentIndex === -1) {
+    let newIndex: number;
+    if (currentMarkerIndex === null) {
       newIndex = direction === 'up' ? markers.length - 1 : 0;
-    } else if (direction === 'up') {
-      newIndex = currentIndex > 0 ? currentIndex - 1 : markers.length - 1;
     } else {
-      newIndex = currentIndex < markers.length - 1 ? currentIndex + 1 : 0;
+      newIndex = direction === 'up' ? currentMarkerIndex - 1 : currentMarkerIndex + 1;
+      if (newIndex < 0) newIndex = markers.length - 1;
+      if (newIndex >= markers.length) newIndex = 0;
     }
 
-    const newMarkerIndex = markers[newIndex].id;
-    setCurrentMarkerIndex(newMarkerIndex);
-    return newMarkerIndex;
+    setCurrentMarkerIndex(newIndex);
+    setMarkers(prevMarkers =>
+      prevMarkers.map((marker, index) => ({
+        ...marker,
+        isCurrent: index === newIndex
+      }))
+    );
+
+    return markers[newIndex].id;
   }, [markers, currentMarkerIndex]);
 
-  return {
-    markers,
-    currentMarkerIndex,
-    addMarker,
-    removeMarker,
-    navigateMarker,
-  };
+  return { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker };
 }
