@@ -16,15 +16,10 @@ export default function Home() {
   const chatRef = useRef<HTMLDivElement>(null);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker } = useMarkers();
-  const [, setForceUpdate] = useState({});
   const shouldScrollRef = useRef(true);
   const lastScrollPositionRef = useRef(0);
   const isNavigatingRef = useRef(false);
   const isAutoScrollingRef = useRef(false);
-
-  useEffect(() => {
-    setForceUpdate({});
-  }, [markers]);
 
   const isScrolledToBottom = useCallback(() => {
     if (chatRef.current) {
@@ -156,7 +151,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-grow overflow-hidden pb-[104px]"> {/* Adjusted padding-bottom */}
+      <div className="flex flex-grow overflow-hidden pb-[104px]">
         <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
           <AnimatePresence>
             {messages.map((message, index) => (
@@ -185,7 +180,7 @@ export default function Home() {
         />
       </div>
       <motion.div 
-        className="flex space-x-2 p-2 bg-gray-800 fixed bottom-14 left-0 right-0 h-[52px]" // Added fixed height
+        className="flex space-x-2 p-2 bg-gray-800 fixed bottom-14 left-0 right-0 h-[52px]"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
