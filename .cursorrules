@@ -138,3 +138,68 @@ When working with the external Rust backend:
 - Ensure proper error handling for potential backend failures or slow responses.
 - Consider implementing retry mechanisms for failed requests.
 - Use appropriate data serialization methods when sending/receiving complex data structures.
+
+## UI Loading and Rendering
+
+When developing the UI for g-tin, especially for first run loading, keep these points in mind:
+
+1. Use Next.js's dynamic import for components that may cause hydration mismatches:
+   ```typescript
+   const DynamicComponent = dynamic(() => import('@/components/SomeComponent'), {
+     ssr: false,
+     loading: () => <LoadingSpinner />
+   });
+   ```
+
+2. Implement a client-side check in the main page component:
+   ```typescript
+   export default function Home() {
+     const [isClient, setIsClient] = useState(false);
+
+     useEffect(() => {
+       setIsClient(true);
+     }, []);
+
+     if (!isClient) return <LoadingSpinner />;
+
+     // Rest of the component
+   }
+   ```
+
+3. In complex components, use a mounting check:
+   ```typescript
+   export default function ComplexComponent() {
+     const [isMounted, setIsMounted] = useState(false);
+
+     useEffect(() => {
+       setIsMounted(true);
+     }, []);
+
+     if (!isMounted) return null; // or a loading spinner
+
+     // Rest of the component
+   }
+   ```
+
+4. Initialize state in useEffect hooks to avoid hydration mismatches:
+   ```typescript
+   const [data, setData] = useState(null);
+
+   useEffect(() => {
+     // Initialize data here
+     setData(initialData);
+   }, []);
+   ```
+
+5. Use Suspense and fallback for asynchronous components:
+   ```typescript
+   <Suspense fallback={<LoadingSpinner />}>
+     <AsyncComponent />
+   </Suspense>
+   ```
+
+6. Be mindful of Tauri's webview initialization time. Consider adding a splash screen or initial loading state in the Rust part of the application if necessary.
+
+7. For critical UI elements, consider using skeleton loaders instead of spinner to improve perceived performance.
+
+These strategies help ensure smooth loading and rendering, especially on the first run of the application.
