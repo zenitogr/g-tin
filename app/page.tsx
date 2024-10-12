@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import MarkerNavigation from '@/components/MarkerNavigation';
+import MessageCollections from '@/components/MessageCollections';
 import { useMarkers } from '@/hooks/useMarkers';
+import { useMessageCollections } from '@/hooks/useMessageCollections';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [messages, setMessages] = useState([
     { text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false }
   ]);
@@ -16,6 +19,13 @@ export default function Home() {
   const chatRef = useRef<HTMLDivElement>(null);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { markers, currentMarkerIndex, addMarker, removeMarker, navigateMarker } = useMarkers();
+  const {
+    collections,
+    currentCollectionIndex,
+    addCollection,
+    removeCollection,
+    navigateCollection
+  } = useMessageCollections();
   const shouldScrollRef = useRef(true);
   const lastScrollPositionRef = useRef(0);
   const isNavigatingRef = useRef(false);
@@ -130,6 +140,28 @@ export default function Home() {
     return index !== -1 ? index + 1 : 0;
   }, [currentMarkerIndex, markers]);
 
+  const handleAddCollection = useCallback(() => {
+    const name = prompt('Enter a name for the collection:');
+    if (name) {
+      addCollection(name, messages);
+    }
+  }, [addCollection, messages]);
+
+  const handleRemoveCollection = useCallback(() => {
+    if (currentCollectionIndex !== null) {
+      const collectionToRemove = collections[currentCollectionIndex];
+      if (confirm(`Are you sure you want to remove the collection "${collectionToRemove.name}"?`)) {
+        removeCollection(collectionToRemove.id);
+      }
+    }
+  }, [currentCollectionIndex, collections, removeCollection]);
+
+  useEffect(() => {
+    // Simulate a short delay to ensure all components are ready
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const chatElement = chatRef.current;
     if (chatElement) {
@@ -149,9 +181,21 @@ export default function Home() {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
+  if (!isLoaded) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-grow overflow-hidden pb-[104px]">
+        <MessageCollections
+          collections={collections}
+          currentCollectionIndex={currentCollectionIndex}
+          onNavigateUp={() => navigateCollection('up')}
+          onNavigateDown={() => navigateCollection('down')}
+          onAddCollection={handleAddCollection}
+          onRemoveCollection={handleRemoveCollection}
+        />
         <Card ref={chatRef} className="flex-grow overflow-y-auto p-3 bg-gray-900 border-gray-700 rounded-none custom-scrollbar">
           <AnimatePresence>
             {messages.map((message, index) => (
