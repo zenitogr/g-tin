@@ -11,6 +11,7 @@ import { useMessageCollections } from '@/hooks/useMessageCollections';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '@/hooks/useChat';
 import { useScrollHandling } from '@/hooks/useScrollHandling';
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ChatInterface() {
   const [isMounted, setIsMounted] = useState(false);
@@ -19,9 +20,12 @@ export default function ChatInterface() {
   const {
     collections,
     currentCollectionIndex,
+    selectedMessages,
     addCollection,
     removeCollection,
-    navigateCollection
+    navigateCollection,
+    toggleMessageSelection,
+    addSelectedMessagesToCollection,
   } = useMessageCollections();
   const {
     chatRef,
@@ -59,6 +63,13 @@ export default function ChatInterface() {
     }
   }, [currentCollectionIndex, collections, removeCollection]);
 
+  const handleAddToCollection = useCallback(() => {
+    if (currentCollectionIndex !== null && selectedMessages.length > 0) {
+      const currentCollection = collections[currentCollectionIndex];
+      addSelectedMessagesToCollection(currentCollection.id, messages);
+    }
+  }, [currentCollectionIndex, selectedMessages, collections, addSelectedMessagesToCollection, messages]);
+
   if (!isMounted) {
     return null; // or return a loading spinner
   }
@@ -84,11 +95,18 @@ export default function ChatInterface() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className={`mb-2 ${message.isUser ? 'text-right' : 'text-left'}`}
+                  className={`mb-2 flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                 >
-                  <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
-                    {message.text}
-                  </span>
+                  <div className={`flex items-center ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <Checkbox
+                      checked={selectedMessages.includes(message.id)}
+                      onCheckedChange={() => toggleMessageSelection(message.id)}
+                      className={`${message.isUser ? 'ml-2' : 'mr-2'}`}
+                    />
+                    <span className={`inline-block p-2 rounded-lg ${message.isUser ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
+                      {message.text}
+                    </span>
+                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -124,6 +142,11 @@ export default function ChatInterface() {
             </svg>
           </Button>
         </motion.div>
+        {selectedMessages.length > 0 && (
+          <Button onClick={handleAddToCollection} className="bg-green-600 hover:bg-green-700 p-2 rounded-lg h-full">
+            Add to Collection
+          </Button>
+        )}
       </motion.div>
     </div>
   );

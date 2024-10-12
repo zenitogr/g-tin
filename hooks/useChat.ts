@@ -1,23 +1,19 @@
 import { useState, useCallback } from 'react';
-
-interface Message {
-  text: string;
-  isUser: boolean;
-}
+import { Message } from '@/types/chat';
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
 
   const initializeChat = useCallback(() => {
-    setMessages([{ text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false }]);
+    setMessages([{ id: Date.now(), text: "Hello! I'm the g-tin AI assistant. How can I help you today?", isUser: false }]);
   }, []);
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim()) {
       setMessages(prevMessages => [
         ...prevMessages,
-        { text: inputMessage, isUser: true }
+        { id: Date.now(), text: inputMessage, isUser: true }
       ]);
       setInputMessage('');
 
@@ -25,7 +21,7 @@ export function useChat() {
       setTimeout(() => {
         setMessages(prevMessages => [
           ...prevMessages,
-          { text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }
+          { id: Date.now(), text: "I'm a mock response. The AI integration is not implemented yet.", isUser: false }
         ]);
       }, 1000);
     }
